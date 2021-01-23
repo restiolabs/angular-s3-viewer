@@ -56,9 +56,7 @@ export class AppComponent {
   }
 
   resetSelected() {
-    this.displayList.forEach(item => {
-      item.selected = false;
-    })
+    this.displayList.forEach(item => {item.selected = false})
     this.displayFileActions = false;
   }
 
