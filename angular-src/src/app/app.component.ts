@@ -21,32 +21,38 @@ export class AppComponent {
   constructor(private fileService: FileService) {}
 
   ngOnInit() {
-    this.loadFiles();
+    // get files from server and initialise display to root path
+    this.loadFiles()
+    .then(() => this.setDisplay([]));
   }
 
   loadFiles() {
-    this.fileService.getFiles().toPromise()
+    function fileSizeFormatter(input) {
+      if(input) {
+        let sizeInMB = input / 1024 / 1024;
+        if(sizeInMB.toFixed(2) === '0.00') return '0.01 MB';
+        return `${sizeInMB.toFixed(2)} MB`
+      }
+    }
+
+    return this.fileService.getFiles().toPromise()
     .then(res => {
       this.fileList = res['files'];
       this.bucket = res['bucket'];
       
       this.fileList.forEach(file => {
-        if(!file.isFolder) file.formattedSize = this.fileSizeFormatter(file.Size);
+        if(!file.isFolder) file.formattedSize = fileSizeFormatter(file.Size);
         file.formattedDate = moment(file.LastModified).format('YYYY-MM-DD HH:mm');
       })
-
-      this.displayList = this.fileList.filter(file => file.Path.length === 0)
-      this.displayPath = [this.bucket];
     })
     .catch(console.log);
   }
 
-  fileSizeFormatter(input) {
-    if(input) {
-      let sizeInMB = input / 1024 / 1024;
-      if(sizeInMB.toFixed(2) === '0.00') return '0.01 MB';
-      return `${sizeInMB.toFixed(2)} MB`
-    }
+  setDisplay(path) {
+    let newDepth = path.length;
+    this.displayList = this.fileList.filter(file => file.Path.length === newDepth && isEqual(file.Path.slice(0, newDepth), path));
+    this.displayList = orderBy(this.displayList, ['isFolder', 'Name'], ['desc', 'asc']);
+    this.displayPath = [this.bucket, ...path];
   }
 
   resetSelected() {
@@ -56,28 +62,24 @@ export class AppComponent {
     this.displayFileActions = false;
   }
 
-  selectFile(file) {
+  fileClicked(file) {
     this.resetSelected()
     file.selected = true;
     if(!file.isFolder) this.displayFileActions = true;
   }
 
-  openFile(file) {
+  fileDoubleClicked(file) {
     if(file.isFolder) {
       this.resetSelected();
       let path = [...file.Path, file.Name];
-      this.displayList = this.fileList.filter(file => file.Path.length === path.length && isEqual(file.Path.slice(0,path.length), path));
-      this.displayList = orderBy(this.displayList, ['isFolder', 'Name'], ['desc', 'asc']);
-      this.displayPath = [this.bucket, ...path];
+      this.setDisplay(path);
     }
   }
 
-  setDisplayPath(index) {
+  displayPathClicked(index) {
     this.resetSelected();
     let path = this.displayPath.slice(1,index+1);
-    this.displayList = this.fileList.filter(file => file.Path.length === path.length && isEqual(file.Path.slice(0,path.length), path));
-    this.displayList = orderBy(this.displayList, ['isFolder', 'Name'], ['desc', 'asc']);
-    this.displayPath = [this.bucket, ...path];
+    this.setDisplay(path);
   }
 
 }

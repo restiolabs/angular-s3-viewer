@@ -12,7 +12,7 @@
                   </button>
                   <button *ngIf="i < displayPath.length-1" mat-button
                     style="font-size:18px;padding:0px;text-transform:capitalize;"
-                    (click)="setDisplayPath(i)">{{node}}</button>
+                    (click)="displayPathClicked(i)">{{node}}</button>
                   <button *ngIf="i === displayPath.length-1" mat-button
                     style="font-size:18px;padding:0px;text-transform:capitalize;">
                     {{node}}
@@ -53,7 +53,7 @@
             <div class="table-container" style="width: 100%;">
               <table class="mat-table">
                 <tbody *ngIf="!this.switchingView">
-                  <tr *ngFor="let file of displayList" (click)="selectFile(file)" (dblclick)="openFile(file)"
+                  <tr *ngFor="let file of displayList" (click)="fileClicked(file)" (dblclick)="fileDoubleClicked(file)"
                     [class]="'mat-row table-row'" [class.row-selected]="file.selected">
                     <td class="mat-cell" style="width: 80px;">
                       <mat-icon *ngIf="file.isFolder" class="mat-icon-rtl-mirror">
