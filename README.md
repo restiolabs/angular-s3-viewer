@@ -28,11 +28,11 @@ S3KEY="yourkey" S3SECRET="yoursecret" S3BUCKET="bucketname" npm run dev-api
 cd angular-src
 ng serve
 
-# open your brower at 'localhost:4200
+# open your brower at `localhost:4200`
 ```
 
 Note: 
-The nodejs server will listen at port 3000 by default, it can be changed with the PORT env variable.
-The angular dev server by default listens at port 4200, it can be changed with the --port cmd line arg.
-If the nodejs port is changed, then update the client here: `angular-src/src/app/file.service.ts`
+* The angular dev server by default listens at port 4200, it can be changed with the --port cmd line arg.
+* The nodejs server will listen at port 3000 by default, it can be changed with the PORT env variable.
+* If the nodejs port is changed, then update the client here: `angular-src/src/app/file.service.ts`
 
